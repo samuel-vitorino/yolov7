@@ -35,8 +35,8 @@ def detect(save_img=False):
     stride = int(model.stride.max())  # model stride
     imgsz = check_img_size(imgsz, s=stride)  # check img_size
 
-    if trace:
-        model = TracedModel(model, device, opt.img_size)
+    #if trace:
+    #    model = TracedModel(model, device, opt.img_size)
 
     if half:
         model.half()  # to FP16
@@ -85,7 +85,10 @@ def detect(save_img=False):
         # Inference
         t1 = time_synchronized()
         with torch.no_grad():   # Calculating gradients would cause a GPU memory leak
-            pred = model(img, augment=opt.augment)[0]
+            pred, features = model(img, augment=opt.augment)
+        
+        pred = pred[0]
+
         t2 = time_synchronized()
 
         # Apply NMS
